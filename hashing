@@ -1,1 +1,68 @@
+#include <iostream>
+#include <vector>
+#include <optional>
+
+class HashTable {
+private:
+    std::vector<std::optional<int>> table;
+    int capacity;
+
+    int hash(int key) const {
+        return key % capacity;
+    }
+
+public:
+    HashTable(int size) : capacity(size) {
+        table.resize(capacity);
+    }
+
+    void insert(int key) {
+        int index = hash(key);
+        int i = 0;
+        while (table[(index + i) % capacity].has_value()) {
+            if (table[(index + i) % capacity] == key) {
+                return; // Key already exists
+            }
+            i++;
+        }
+        table[(index + i) % capacity] = key;
+    }
+
+    bool search(int key) const {
+        int index = hash(key);
+        int i = 0;
+        while (table[(index + i) % capacity].has_value()) {
+            if (table[(index + i) % capacity] == key) {
+                return true;
+            }
+            i++;
+        }
+        return false;
+    }
+
+    void remove(int key) {
+        int index = hash(key);
+        int i = 0;
+        while (table[(index + i) % capacity].has_value()) {
+            if (table[(index + i) % capacity] == key) {
+                table[(index + i) % capacity].reset();
+                return;
+            }
+            i++;
+        }
+    }
+};
+
+int main() {
+    HashTable ht(10);
+    ht.insert(15);
+    ht.insert(25);
+    ht.insert(35);
+
+    std::cout << "Searching for 25: " << (ht.search(25) ? "Found" : "Not Found") << std::endl;
+    ht.remove(25);
+    std::cout << "Searching for 25 after removal: " << (ht.search(25) ? "Found" : "Not Found") << std::endl;
+
+    return 0;
+}
 
